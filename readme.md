@@ -1,0 +1,2 @@
+An idea for showing vote distribution, turnout and electorate accross a variety of areas. 
+The outer circle's area represents the total electorate the pie chart area is proportional to the numebr of votes cast so turnout can be infered. Ignoring problems of comparing areas and a general distaste for piecharts.

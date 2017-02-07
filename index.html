@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en-GB" class="core">
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="proportional-pie.js"></script>
+</head>
+<body>
+    <main class="article" role="main">
+        <h1 class="article__headline--mega">Proportional Pies</h1>
+        <p>
+            A sketch idea for showing vote distribution, turnout and total electorate accross a set of electoral areas. </p>
+<p>The outer circle's area represents the total electorate the, pie chart area is proportional to the numebr of votes cast so turnout can be infered. Ignoring problems of comparing areas and a general distaste for piecharts.
+        </p>
+    </main>
+    <div class="chart"></div>
+</body>
+<style>
+body{
+  font-family: sans-serif;
+}
+.segment-0{
+    fill:#FF9999;
+}
+.segment-1{
+    fill:#9999FF;
+}
+.extent{
+    fill:none;
+    stroke:#000;
+    stroke-width:3;
+    stroke-dasharray: 5 2;
+}
+.pie-container{
+    display: inline-block;
+    margin: 10px;
+}
+
+</style>
+<script>
+
+    
+    d3.json('regional.json',function(regionaldata){
+        
+        var pie = proportionalPie()
+            .maxRadius(45)
+            .maxValue(d3.max(regionaldata, function(d){ return d.electorate; }))
+            .extentMarker(true)
+            .extentAccessor(function(d){
+                return d.electorate;
+            });
+        
+        var regionaldata = regionaldata.map(function(d){
+            d.values = [d.remain_pct,d.leave_pct];
+            d.total = d.turnout_abs;
+            d.name = '-'+d.region_id+'-'; //put a proper name in here
+            return d;
+        });
+        
+        console.log(regionaldata);
+        
+        d3.select('.chart')
+            .selectAll('div.pie-container')
+                .data(regionaldata)
+                .enter()
+                    .append('div')
+                .attr('class','pie-container')
+                    .call(function(parent){
+                        parent.append('h3')
+                            .text(function(d){ return d.name });
+               
+                        parent.append('svg')
+                                .attr('class','pie-chart')
+                                .attr('width', 150)
+                                .attr('height', 150)
+                                .attr('viewBox','0 0 100 100')
+                            .append('g')
+                                .attr('transform','translate(50,50)')
+                            .call(pie);
+                            
+                        parent.append('div')
+                            .html(function(d){
+                                return 'L <span class="leave-label">'+Math.round(d.leave_pct)+'%</span> R <span class="remain-label">'+Math.round(d.remain_pct)+'%</span>. <div>Turnout ' + Math.round(d.turnout_pct) +'%</div>';
+                            })
+                    })
+    })
+
+</script>
+
+
+</html>
